@@ -1,28 +1,52 @@
-angular.module('starter.controllers', [])
+(function() {
+  angular.module('starter')
+    .controller('RoomCtrl', ['$scope', '$state','localStorageService','SocketService', 'moment','$ionicScrollDelegate', RoomCtrl]);
 
-.controller('DashCtrl', function($scope) {})
+  function RoomCtrl($scope, $state, localStorageService, SocketService, moment, $ionicScrollDelegate ){
 
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+    var me = this;
 
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
-})
+    me.messages =[];
+    $scope.humanize = function(timestamp) {
+      return moment(timestamp).fromNow();
+    };
+    me.currentRoom = localStorageService.get('room');
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
-})
+    var currentUser = localStorageService.get('userName');
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
-});
+    $scope.isNotCurrentUser = function(user) {
+      if(currentUser != user) {
+        return 'not-currenr-user';
+      }
+      return 'current-user';
+    };
+    $scope.sendTextMessage = function() {
+      var msg = {
+        'room': me.currentRoom,
+        'user': currentUser,
+        'text': me.message,
+        'time': moment()
+      };
+      me.messages.push(msg);
+      $ionicScrollDelegate.scrollBottom();
+
+      me.message = '';
+
+      SocketService.emit('send:message', msg);
+    };
+    $scope.leaveRoom = function() {
+      var msg = {
+        'user': currentUser,
+        'room': me.currentRoom,
+        'time': moment()
+      };
+      SocketService.emit('leave:room', msg);
+      $state.go('rooms');
+    };
+
+    SocketService.on('message', function(msg){
+      me.messages.push(msg);
+      $ionicScrollDelegate.scrollBottom();
+    });
+  }
+})();
