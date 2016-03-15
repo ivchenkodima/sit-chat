@@ -30,4 +30,4 @@ angular.module('starter', ['ionic', 'LocalStorageModule', 'btford.socket-io', 'a
       });
 
     $urlRouterProvider.otherwise('/login');
-  });
+ })
