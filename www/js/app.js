@@ -18,15 +18,15 @@ angular.module('starter', ['ionic', 'LocalStorageModule', 'btford.socket-io', 'a
 
       .state('login', {
         url: "/login",
-        templateUrl: "templates/login.html"
+        templateUrl: "../templates/login.html"
       })
       .state('rooms', {
         url: '/rooms',
-        templateUrl: 'templates/rooms.html'
+        templateUrl: '../templates/rooms.html'
       })
       .state('room', {
         url: 'room',
-        templateUrl: 'template/room.html'
+        templateUrl: '../templates/room.html'
       });
 
     $urlRouterProvider.otherwise('/login');
