@@ -1,6 +1,6 @@
 (function() {
   angular.module('starter')
-    .controller('HomeCtrl', ['$scope', '$state','$localStorageService','SocketService', HomeCtrl]);
+    .controller('HomeCtrl', ['$scope', '$state','$localStorageService','SocketService', HomeCtrl ]);
 
     function HomeCtrl($scope, $state, localStorageService, SocketService) {
 
